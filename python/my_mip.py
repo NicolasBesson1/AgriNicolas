@@ -94,6 +94,7 @@ def co2_optimal_allocation(co2_consumption):
 
     # checking if a solution was found
     if model.num_solutions:
+        co2_allocation = [co2[j].x for j in range(1,n)]
         out.write('route with total co2 consumption of %g found: %s'
                   % (model.objective_value, places[0]))
        
@@ -103,30 +104,22 @@ def co2_optimal_allocation(co2_consumption):
             while True:
                 array=[i for i in V if x[nc][i][t].x >= 0.99]
                 if array==[]:
-                    return None
+                    return co2_allocation
                 nc = array[0]
                 out.write(' -> %s' % places[nc])
                 if nc == 0:
                     break
             out.write('\n')
-        co2_allocation = [co2[j].x for j in range(1,n)]
+        
 
 
 
-        print(co2_allocation)
-        print(sum(co2_allocation))
+        return co2_allocation
     else:
         print('Not feasible')
 
 nb_locations=len(co2_consumption)
 
-#tours,co2_allocation=optimal_co2_allocation(co2_consumption, 10, [1 for _ in range(len(co2_consumption))])
 
-##print(co2_allocation)
-##
-##for t in tours:
-##    print(t)
 
-#print(co2_allocation)
-
-co2_optimal_allocation(co2_consumption)
+print(co2_optimal_allocation(co2_consumption))
