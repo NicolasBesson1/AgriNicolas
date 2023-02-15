@@ -1,9 +1,22 @@
 from mip import *
 import json
 from itertools import product
-from sys import stdout as out
 from global_data import *
 from display_routes_tkinter import *
+from allocation_methods import *
+
+##def every_subset_rec(V,i,set_of_subsets,current_subset):
+##    if i==len(V):
+##        if current_subset!=[]:
+##            set_of_subsets += [current_subset]
+##    else:
+##        every_subset_rec(V,i+1,set_of_subsets,current_subset + [V[i]])
+##        every_subset_rec(V,i+1,set_of_subsets,current_subset)
+##
+##def every_subset(V):
+##    set_of_subsets=[]
+##    every_subset_rec(V,0,set_of_subsets,[])
+##    return set_of_subsets
 
 #Add to model the constraints for Vehicle Routing Problem
 def add_vrp_constraints(model,V,n,x,y):
@@ -115,8 +128,7 @@ def routes_minimum_co2():
     if model.num_solutions:
         routes=[]
         #co2_allocation = [co2[j].x for j in range(1,n)]
-        out.write('route with total co2 consumption of %g found:\n'
-                  % round((model.objective_value),ndigits=1))
+        print('route with total co2 consumption of',round((model.objective_value),ndigits=1), 'found')
         return construct_routes(V,x)
 
     else:
@@ -183,8 +195,7 @@ def co2_optimal_allocation():
     if model.num_solutions:
         routes=[]
         #co2_allocation = [co2[j].x for j in range(1,n)]
-        out.write('route with total co2 consumption of %g found:\n'
-                  % (model.objective_value))
+        print('route with total co2 consumption of',round((model.objective_value),ndigits=1), 'found')
         return construct_routes(V,x),[round(co2[j].x,ndigits=1) for j in V - {0}]
 
     else:
@@ -194,12 +205,14 @@ def co2_optimal_allocation():
 
 
 
-if __name__=='__main__':
-    routes,allocation=co2_optimal_allocation()
-    print("The resulting routes are :")
-    print(routes)
-    print("The resulting allocation is :")
-    print(allocation)
-    print("If the farmers had been served individually, the co2 allocation would have been :")
-    print([round(co2_consumption[0][j] + co2_consumption[j][0],ndigits=1) for j in range(1,len(co2_consumption))]) 
-    display_routes(routes)
+
+
+
+
+
+
+
+
+
+
+
