@@ -5,19 +5,6 @@ from sys import stdout as out
 from global_data import *
 from display_routes_tkinter import *
 
-##def every_subset_rec(V,i,set_of_subsets,current_subset):
-##    if i==len(V):
-##        if current_subset!=[]:
-##            set_of_subsets += [current_subset]
-##    else:
-##        every_subset_rec(V,i+1,set_of_subsets,current_subset + [V[i]])
-##        every_subset_rec(V,i+1,set_of_subsets,current_subset)
-##
-##def every_subset(V):
-##    set_of_subsets=[]
-##    every_subset_rec(V,0,set_of_subsets,[])
-##    return set_of_subsets
-
 #Add to model the constraints for Vehicle Routing Problem
 def add_vrp_constraints(model,V,n,x,y):
     # constraint : if a farm is entered in a tour, then it is left in the same tour
@@ -121,7 +108,6 @@ def routes_minimum_co2():
 
     add_vrp_constraints(model,V,n,x,y)
 
-
     # optimizing
     model.optimize()
 
@@ -153,7 +139,7 @@ def co2_optimal_allocation():
     # binary variables indicating if arc (i,j) is used in route t or not
     x = [[[model.add_var(var_type=BINARY) for t in V] for j in V] for i in V]
     
-    # continuous variable to prevent subtours: each city will have a
+    # continuous variable to prevent subtours: each farmer will have a
     # different sequential id in the planned route except the first one
     y = [[model.add_var() for i in V] for t in V]
 
@@ -163,7 +149,7 @@ def co2_optimal_allocation():
     #m[i] is the marginality value of farmer i
     m = [model.add_var() for i in V]
 
-    #v[j][i][k][t] = 1 iff x[i][j][t] = 1 and x[j][k][t]
+    #v[j][i][k][t] <- used to indicate whether there is a path of size 2 from i to k passing through j in route t
     v = [[[[model.add_var() for _ in V] for _ in V] for _ in V] for _ in V]
 
     #variable to represent the amount of CO2 allocated to each farm
@@ -181,14 +167,13 @@ def co2_optimal_allocation():
     for t in V:
         for j in V-{0}:
             model += it[j][t] == xsum(x[i][j][t] for i in V)
-            
     
     add_path_size_two_constraints(model,V,v,x)
-    
     
     for j in range(1,n):
         #Individual rationality
         add_individual_rationality_constraint(model,co2,j)
+        #Marginality
         add_marginality_constraint(model,V,x,v,co2,m,it,j,M)
 
     # optimizing
@@ -200,7 +185,6 @@ def co2_optimal_allocation():
         #co2_allocation = [co2[j].x for j in range(1,n)]
         out.write('route with total co2 consumption of %g found:\n'
                   % (model.objective_value))
-       
         return construct_routes(V,x),[round(co2[j].x,ndigits=1) for j in V - {0}]
 
     else:
@@ -217,8 +201,5 @@ if __name__=='__main__':
     print("The resulting allocation is :")
     print(allocation)
     print("If the farmers had been served individually, the co2 allocation would have been :")
-    print([round(co2_consumption[0][j] + co2_consumption[j][0],ndigits=1) for j in range(1,len(co2_consumption))])
-
-    
-    
+    print([round(co2_consumption[0][j] + co2_consumption[j][0],ndigits=1) for j in range(1,len(co2_consumption))]) 
     display_routes(routes)
