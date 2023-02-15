@@ -36,7 +36,7 @@ def add_individual_rationality_constraint(model, co2, j):
     global co2_consumption
     model += co2[j] <= co2_consumption[0][j] + co2_consumption[j][0]
 
-#Adds efficiency constraint for farmer j to model (the amount of co2 allocated is equal to the amount of co2 produced)
+#Adds efficiency constraint to model (the amount of co2 allocated is equal to the amount of co2 produced)
 def add_efficiency_constraint(model, V, co2, x):
     global co2_consumption
     model += xsum(co2[j] for j in V - {0}) == xsum(x[i][j][t]*co2_consumption[i][j] for i in V for j in V for t in V)
