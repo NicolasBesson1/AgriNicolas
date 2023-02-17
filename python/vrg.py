@@ -1,7 +1,8 @@
 from mip import *
 from global_data import *
 from tsp import *
-from allocation_methods import individual_rationality
+from allocation_methods import individual_rationality, marginality
+from mip_co2_allocation import routes_minimum_co2
 
 def initialize_omega():
     global N
@@ -56,7 +57,7 @@ def master_problem(omega):
         print("Not feasible")
         return None
 
-def core_procedure():
+def core_procedure(verbose=False):
     global N
     #STEP 0
     omega=initialize_omega()
@@ -77,16 +78,24 @@ def core_procedure():
         if sum(ystar[N.index(i)] for i in PS0k) > c(PS0k):
             omega.append(PS0k)
             if not_omega == []:
-                print("Empty core")
+                if verbose:
+                    print("Empty core")
                 return None
         else:
-            print("No coalition is unsatisfied")
-            return [round(v,ndigits=1) for v in ystar]
+            if verbose:
+                print("No coalition is unsatisfied")
+            return [round(v,ndigits=1) for v in ystar][1:]
         
         
     
-    return [round(v,ndigits=1) for v in ystar]
+    return [round(v,ndigits=1) for v in ystar][1:]
 
-
-print(individual_rationality(N))
+'''
+routes=routes_minimum_co2()
+print("Individual rationality :")
+print(individual_rationality(routes))
+print("Marginality :")
+print(marginality(routes))
+print("Core element :")
 print(core_procedure())
+'''
