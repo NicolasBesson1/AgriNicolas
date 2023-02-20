@@ -5,7 +5,7 @@ Requirements :
 
 pip install mip
 
-pip install cbcpy     or    pip install cbc
+pip install cbc
 
 To execute :
 
