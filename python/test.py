@@ -1,27 +1,21 @@
 from global_data import *
-from allocation_methods import *
-from mip_co2_allocation import *
 from display_results_tkinter import *
+from cvrp_solver import cvrp_solver
+from flp_solver import flp_solver
 
+if __name__ == '__main__':
+    locations = [i for i in range(len(co2_consumption))]
+    solver = cvrp_solver(locations, co2_consumption, truck_capacity, production)
+    print("Optimal value", solver.solve_optimal(fairness=True))
+    print("Optimal route", solver.routes)
+    print("Optimal allocation", solver.cost_allocation)
 
-if __name__=='__main__':
-    routes,allocation=co2_optimal_allocation()
-    print("The resulting routes are :")
-    print(routes)
-    print([farm_names[i] for i in routes[0]])
-    print("The resulting allocation is :")
-    print(allocation)
-    print("If the farmers had been served individually, the co2 allocation would have been :")
-    print(individual_rationality(routes))
-    print("Marginality values for each farm :")
-    m=marginality(routes)
-    print(m)
+    print("UFL :")
 
-    print("Allocation with IR-2 method")
-    print(ir_method(routes))
-    print("Allocation with tau-value method")
-    print(tau_value_method(routes))
-    print("Allocation with core procedure")
-    print(core_procedure())
-    display_routes(routes)
+    solver_ufl = flp_solver(locations,co2_consumption,opening_costs)
+    print("Optimal value", solver_ufl.solve_optimal(fairness=True))
+    print("Optimal allocation", solver_ufl.cost_allocation)
+
+    display_facilities(solver_ufl.opened_facilities,solver_ufl.serving_matrix,locations)
+
     
