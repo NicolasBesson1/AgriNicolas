@@ -1,7 +1,7 @@
 from global_data import *
 from allocation_methods import *
 from mip_co2_allocation import *
-from display_routes_tkinter import *
+from display_results_tkinter import *
 from vrg import core_procedure
 
 if __name__=='__main__':
