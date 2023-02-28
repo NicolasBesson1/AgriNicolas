@@ -96,3 +96,33 @@ def display_facilities(opened_facilities,serving_matrix,locations):
                 C.create_line(Ep[i][0], Ep[i][1], Ep[j][0], Ep[j][1], fill='black', width=1)
     C.pack()
     top.mainloop()
+
+def display_tour_facilities(opened_facilities, routes, locations):
+    global colors, points
+    R = routes
+    N = len(points)
+    x = [float(points[i][0]) for i in range(N)]
+    y = [float(points[i][1]) for i in range(N)]
+    mx = min(x)
+    Mx = max(x)
+    my = min(y)
+    My = max(y)
+    height = 720
+    width = 1280
+    Ep = [[(x[i] - mx) * width / (Mx - mx), (y[i] - my) * height / (My - my), i] for i in range(N)]
+    top = tkinter.Tk()
+    C = tkinter.Canvas(top, bg="white", height=height, width=width)
+    for r in range(len(R)):
+
+        for e in R[r]:
+            create_circle(int(Ep[e][0]), int(Ep[e][1]), 4, C, colors[r])
+        for i in range(len(R[r]) - 1):
+            C.create_line(Ep[R[r][i]][0], Ep[R[r][i]][1], Ep[R[r][i + 1]][0], Ep[R[r][i + 1]][1], fill=colors[r],
+                          width=1)
+    for j in locations:
+        if opened_facilities[j]==1:
+            create_square(int(Ep[j][0]), int(Ep[j][1]), 4, C)
+        else:
+            create_circle(int(Ep[j][0]), int(Ep[j][1]), 4, C)
+    C.pack()
+    top.mainloop()
